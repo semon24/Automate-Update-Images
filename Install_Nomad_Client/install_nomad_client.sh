@@ -71,6 +71,21 @@ tls {
   cert_file = "/etc/nomad.d/nomad-certs/global-client-nomad.pem"
   key_file  = "/etc/nomad.d/nomad-certs/global-client-nomad-key.pem"
 }
+
+plugin "docker" {
+  config {
+    allow_privileged = true
+    volumes {
+      enabled = true
+    }
+  }
+}
+
+plugin "raw_exec" {
+  config {
+    enabled = true
+  }
+}
 EOF
 
 
@@ -114,14 +129,29 @@ fi
 echo "Пользователь $username создан и добавлен в группу sudo (имеет права root через sudo)"
 
 
-echo "Идет установка Docker..."
-sudo apt update
-sudo apt install curl software-properties-common ca-certificates apt-transport-https -y
-wget -O- https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | sudo tee /etc/apt/keyrings/docker.gpg > /dev/null
-echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu jammy stable"| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt update
-apt-cache policy docker-ce
-sudo apt install docker-ce -y
+if ! command -v docker &> /dev/null; then
+    echo "Установка Docker..."
+    sudo apt update
+    sudo apt install -y curl software-properties-common ca-certificates apt-transport-https
+    wget -O- https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | sudo tee /etc/apt/keyrings/docker.gpg > /dev/null
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu jammy stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt update
+    sudo apt install -y docker-ce docker-ce-cli containerd.io
+    echo "Docker успешно установлен"
+else
+    echo "Docker уже установлен (версия: $(docker --version))"
+fi
+
+if ! command -v docker-compose &> /dev/null; then
+    echo "Установка Docker Compose..."
+    sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    echo "Docker Compose успешно установлен (версия: $(docker-compose --version))"
+else
+    echo "Docker Compose уже установлен (версия: $(docker-compose --version))"
+fi
+
+
 
 echo "Добавляем пользователя в группу docker"
 

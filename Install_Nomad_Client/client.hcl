@@ -19,4 +19,20 @@ tls {
   key_file  = "/root/nomad-certs/global-client-nomad-key.pem"
 }
 
+plugin "docker" {
+  config {
+    allow_privileged = true
+    volumes {
+      enabled = true
+    }
+  }
+}
+
+plugin "raw_exec" {
+  config {
+    enabled = true
+  }
+}
+
+
 
