@@ -11,6 +11,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Debug files
+        run: |
+          echo "Содержимое репозитория:"
+          ls -R
+          echo "Содержимое папки jobs:"
+          ls -la ./jobs/
 
       - name: Submit Job to Nomad via API
         env:
