@@ -20,14 +20,18 @@ jobs:
             password: ${{ secrets.SSH_PRIVATE_KEY }}
             port: 22
             script: |
-              # Сначала копируем файл (альтернатива scp)
-              cat > /root/example_jobs.hcl << 'EOF'
-              $(cat jobs/example_jobs.hcl)
-              EOF
+              ## Создаем временный файл
+              TEMP_FILE=$(mktemp)
               
-              # Проверяем что файл скопировался
-              ls -la /root/example_jobs.hcl
-              cat /root/example_jobs.hcl
+              # Копируем содержимое в файл на сервере
+              cat > "$TEMP_FILE" << 'NOMAD_JOB'
+              $(cat jobs/example_jobs.hcl)
+              NOMAD_JOB
+              
+              # Проверяем содержимое файла
+              echo "File content:"
+              cat "$TEMP_FILE"
+              echo -e "\nFile size: $(wc -c < "$TEMP_FILE") bytes
               
               export NOMAD_TOKEN=${{ secrets.NOMAD_TOKEN }}
               nomad job run /root/example_jobs.hcl
