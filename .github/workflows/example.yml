@@ -20,5 +20,5 @@ jobs:
           curl -X POST \
             -H "X-Nomad-Token: $NOMAD_TOKEN" \
             -H "Content-Type: application/json" \
-            --data-binary @../../jobs/example_jobs.hcl \
+            --data-binary @./jobs/example_jobs.hcl \
             "$NOMAD_ADDR/v1/jobs"
