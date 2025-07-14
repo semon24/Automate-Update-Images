@@ -19,7 +19,8 @@ jobs:
             username: root
             password: ${{ secrets.SSH_PRIVATE_KEY }}
             source:   jobs/example_jobs.hcl
-            target:   /root/example_jobs.hcl
+            target:   /tmp/
+            strip_components: 1
 
       - name: Execute remote SSH commands using password
         uses: appleboy/ssh-action@v1
@@ -31,4 +32,4 @@ jobs:
             script: |
               
               export NOMAD_TOKEN=${{ secrets.NOMAD_TOKEN }}
-              nomad job run /root/example_jobs.hcl
+              nomad job run /tmp/example_jobs.hcl
