@@ -8,23 +8,30 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Execute via SSH
+      - name: Настройка SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
         run: |
-          # Настройка SSH
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          # Здесь сразу пропишем хост и порт
+          ssh-keyscan -p 2222 45.86.183.34 >> ~/.ssh/known_hosts
 
-          # Копируем job-файл на сервер
-          scp -o StrictHostKeyChecking=no ./jobs/example_jobs.hcl root@45.86.183.34:/tmp/
+      - name: Копируем Nomad job на сервер
+        run: |
+          # SCP с прямым указанием порта и хоста
+          scp -P 2222 jobs/example_jobs.hcl root@45.86.183.34:/tmp/
 
-          # Запускаем job с передачей NOMAD_TOKEN
-          ssh -o StrictHostKeyChecking=no root@45.86.183.34 \
+      - name: Запускаем Nomad job
+        env:
+          NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
+        run: |
+          # SSH с тем же хостом/портом и запуск nomad job
+          ssh -p 2222 root@45.86.183.34 \
             "export NOMAD_TOKEN=$NOMAD_TOKEN && nomad job run /tmp/example_jobs.hcl"
