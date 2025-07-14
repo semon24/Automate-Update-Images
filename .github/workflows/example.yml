@@ -19,8 +19,10 @@ jobs:
             username: root
             password: ${{ secrets.SSH_PRIVATE_KEY }}
             port: 22
+            sync: |
             source: jobs/example_jobs.hcl
             target: /tmp/example_jobs.hcl
+            # а вот тут на сервере сразу запускаете nomad
             script: |
               export NOMAD_TOKEN=${{ secrets.NOMAD_TOKEN }}
               nomad job run /tmp/example_jobs.hcl
