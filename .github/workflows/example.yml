@@ -12,11 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Nomad Job
+      - name: Submit Job to Nomad via API
+        env:
+          NOMAD_ADDR: "http://45.86.183.34:4646"
+          NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
         run: |
-          # Отправка задачи в Nomad
-          NOMAD_ADDR="http://45.86.183.34:4646/"
-          NOMAD_TOKEN="${{ secrets.NOMAD_TOKEN }}"  # Токен из GitHub Secrets
-
-          # Применение Job файла
-          nomad job run -address=$NOMAD_ADDR -token=$NOMAD_TOKEN ./jobs/example_jobs.hcl
+          curl -X POST \
+            -H "X-Nomad-Token: $NOMAD_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data-binary @./jobs/example_jobs.hcl \
+            "$NOMAD_ADDR/v1/jobs"
