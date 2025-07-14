@@ -19,19 +19,10 @@ jobs:
             username: root
             password: ${{ secrets.SSH_PRIVATE_KEY }}
             port: 22
+            sync: |
+              source: jobs/example_jobs.hcl
+              target: /root/example_jobs.hcl
             script: |
-              ## Создаем временный файл
-              TEMP_FILE=$(mktemp)
-              
-              # Копируем содержимое в файл на сервере
-              cat > "$TEMP_FILE" << 'NOMAD_JOB'
-              $(cat jobs/example_jobs.hcl)
-              NOMAD_JOB
-              
-              # Проверяем содержимое файла
-              echo "File content:"
-              cat "$TEMP_FILE"
-              echo -e "\nFile size: $(wc -c < "$TEMP_FILE") bytes
               
               export NOMAD_TOKEN=${{ secrets.NOMAD_TOKEN }}
               nomad job run /root/example_jobs.hcl
