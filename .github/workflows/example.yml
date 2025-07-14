@@ -21,8 +21,8 @@ jobs:
             port: 22
             sync: |
             source: jobs/example_jobs.hcl
-            target: /tmp/example_jobs.hcl
+            target: /root
             # а вот тут на сервере сразу запускаете nomad
             script: |
               export NOMAD_TOKEN=${{ secrets.NOMAD_TOKEN }}
-              nomad job run /tmp/example_jobs.hcl
+              nomad job run /root/example_jobs.hcl
