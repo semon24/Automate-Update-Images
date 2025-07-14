@@ -19,10 +19,15 @@ jobs:
             username: root
             password: ${{ secrets.SSH_PRIVATE_KEY }}
             port: 22
-            sync: |
-            source: jobs/example_jobs.hcl
-            target: /root
-            # а вот тут на сервере сразу запускаете nomad
             script: |
+              # Сначала копируем файл (альтернатива scp)
+              cat > /root/example_jobs.hcl << 'EOF'
+              $(cat jobs/example_jobs.hcl)
+              EOF
+              
+              # Проверяем что файл скопировался
+              ls -la /root/example_jobs.hcl
+              cat /root/example_jobs.hcl
+              
               export NOMAD_TOKEN=${{ secrets.NOMAD_TOKEN }}
               nomad job run /root/example_jobs.hcl
