@@ -12,6 +12,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Convert HCL to JSON
+        run: |
+          hcl2json ./jobs/example_jobs.hcl > ./jobs/example_jobs.json
+
       - name: Submit Job to Nomad via API
         env:
           NOMAD_ADDR: "http://45.86.183.34:4646"
