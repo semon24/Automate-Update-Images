@@ -10,36 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Настройка SSH
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          # Не обязательно: если захотите все-таки сканировать, но не падать при ошибке:
-          # ssh-keyscan -p 2222 45.86.183.34 >> ~/.ssh/known_hosts || true
-
-      - name: Копируем Nomad job на сервер
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          scp -i ~/.ssh/id_rsa \
-              -o StrictHostKeyChecking=no \
-              -P 2222 \
-              jobs/example_jobs.hcl \
-              root@45.86.183.34:/tmp/
-
-      - name: Запускаем Nomad job
-        env:
-          NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          ssh -i ~/.ssh/id_rsa \
-              -o StrictHostKeyChecking=no \
-              -p 2222 \
-              root@45.86.183.34 \
-            "export NOMAD_TOKEN=$NOMAD_TOKEN && nomad job run /tmp/example_jobs.hcl"
+      - name: SSH to VM using password
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 45.86.183.34        # ваш хост
+          port: 2222               # ваш порт
+          username: root           # логин
+          password: ${{ secrets.SSH_PRIVATE_KEY }}
+          timeout: 1m
+          script: |
+            whoami
+            hostname
+            uptime
