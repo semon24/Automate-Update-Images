@@ -19,4 +19,4 @@ jobs:
           NOMAD_TOKEN="${{ secrets.NOMAD_TOKEN }}"  # Токен из GitHub Secrets
 
           # Применение Job файла
-          nomad job run -address=$NOMAD_ADDR -token=$NOMAD_TOKEN ./example.nomad.hcl
+          nomad job run -address=$NOMAD_ADDR -token=$NOMAD_TOKEN ./jobs/example_jobs.hcl
