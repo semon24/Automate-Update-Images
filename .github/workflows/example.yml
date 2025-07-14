@@ -11,20 +11,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Debug files
-        run: |
-          echo "Содержимое репозитория:"
-          ls -R
-          echo "Содержимое папки jobs:"
-          ls -la ./jobs/
 
       - name: Submit Job to Nomad via API
         env:
           NOMAD_ADDR: "http://45.86.183.34:4646"
           NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
         run: |
-          curl -X POST \
+          curl -v -X POST \
             -H "X-Nomad-Token: $NOMAD_TOKEN" \
-            -H "Content-Type: application/json" \
+            -H "Content-Type: text/plain" \
             --data-binary @./jobs/example_jobs.hcl \
             "$NOMAD_ADDR/v1/jobs"
