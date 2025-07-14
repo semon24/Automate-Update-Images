@@ -20,18 +20,26 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          # Здесь сразу пропишем хост и порт
-          ssh-keyscan -p 2222 45.86.183.34 >> ~/.ssh/known_hosts
+          # Не обязательно: если захотите все-таки сканировать, но не падать при ошибке:
+          # ssh-keyscan -p 2222 45.86.183.34 >> ~/.ssh/known_hosts || true
 
       - name: Копируем Nomad job на сервер
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          # SCP с прямым указанием порта и хоста
-          scp -P 2222 jobs/example_jobs.hcl root@45.86.183.34:/tmp/
+          scp -i ~/.ssh/id_rsa \
+              -o StrictHostKeyChecking=no \
+              -P 2222 \
+              jobs/example_jobs.hcl \
+              root@45.86.183.34:/tmp/
 
       - name: Запускаем Nomad job
         env:
           NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          # SSH с тем же хостом/портом и запуск nomad job
-          ssh -p 2222 root@45.86.183.34 \
+          ssh -i ~/.ssh/id_rsa \
+              -o StrictHostKeyChecking=no \
+              -p 2222 \
+              root@45.86.183.34 \
             "export NOMAD_TOKEN=$NOMAD_TOKEN && nomad job run /tmp/example_jobs.hcl"
