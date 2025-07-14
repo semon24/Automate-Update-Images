@@ -32,4 +32,6 @@ jobs:
             script: |
               
               export NOMAD_TOKEN=${{ secrets.NOMAD_TOKEN }}
+              export NOMAD_ADDR=http://45.86.183.34:4646/
+              nomad acl token self
               nomad job run /tmp/example_jobs.hcl
