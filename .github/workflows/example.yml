@@ -1,4 +1,4 @@
-name: Run Nomad Job
+name: Run Nomad Job via SSH
 
 on:
   push:
@@ -12,17 +12,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Convert HCL to JSON
-        run: |
-          hcl2json ./jobs/example_jobs.hcl > ./jobs/example_jobs.json
-
-      - name: Submit Job to Nomad via API
+      - name: Execute via SSH
         env:
-          NOMAD_ADDR: "http://45.86.183.34:4646"
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }}
         run: |
-          curl -v -X POST \
-            -H "X-Nomad-Token: $NOMAD_TOKEN" \
-            -H "Content-Type: text/plain" \
-            --data-binary @./jobs/example_jobs.hcl \
-            "$NOMAD_ADDR/v1/jobs"
+          # Настройка SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          # Копируем job-файл на сервер
+          scp -o StrictHostKeyChecking=no ./jobs/example_jobs.hcl root@45.86.183.34:/tmp/
+
+          # Запускаем job с передачей NOMAD_TOKEN
+          ssh -o StrictHostKeyChecking=no root@45.86.183.34 \
+            "export NOMAD_TOKEN=$NOMAD_TOKEN && nomad job run /tmp/example_jobs.hcl"
