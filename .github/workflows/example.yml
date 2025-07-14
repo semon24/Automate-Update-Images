@@ -10,15 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH to VM using password
+      - name: Установить netcat
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y netcat
+
+      - name: Протестировать 22 и 2222 порты
+        run: |
+          for p in 22 2222; do
+            echo -n "Порт $p: "
+            nc -zvw5 45.86.183.34 $p && echo open || echo closed
+          done
+
+      - name: SSH via password (порт 22)
+        if: always()           # попробуем даже если тест порта “упал”
         uses: appleboy/ssh-action@v1
         with:
-          host: 45.86.183.34        # ваш хост
-          port: 2222               # ваш порт
-          username: root           # логин
-          password: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 1m
+          host: 45.86.183.34
+          port: 22            # подставьте сюда тот порт, который в тесте показался open
+          username: root
+          password: ${{ secrets.SSH_PASSWORD }}
+          timeout: 30s
           script: |
+            echo "Успешно подключились!"
             whoami
-            hostname
-            uptime
+            uname -a
