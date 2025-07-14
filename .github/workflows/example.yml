@@ -1,0 +1,22 @@
+name: Run Nomad Job
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Nomad Job
+        run: |
+          # Отправка задачи в Nomad
+          NOMAD_ADDR="http://45.86.183.34:4646/"
+          NOMAD_TOKEN="${{ secrets.NOMAD_TOKEN }}"  # Токен из GitHub Secrets
+
+          # Применение Job файла
+          nomad job run -address=$NOMAD_ADDR -token=$NOMAD_TOKEN ./example.nomad.hcl
