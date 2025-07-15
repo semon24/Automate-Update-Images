@@ -25,6 +25,6 @@ jobs:
             -H "X-Nomad-Token: $NOMAD_TOKEN" \
             -H "Content-Type: application/json" \
             --data @./jobs/example_jobs.json \
-            http://45.86.183.34:4646/v1/job/docker-example_compose-up-for2VM
+            http://45.86.183.34:4646/v1/jobs/parse
 
           
