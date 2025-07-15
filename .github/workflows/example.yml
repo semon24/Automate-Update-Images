@@ -24,8 +24,8 @@ jobs:
           NAMESPACE: ${{ github.event.inputs.namespace }}
         run: |
           JOB_PATH=$(find "./${NAMESPACE}" -maxdepth 1 -type f -name '*.hcl' | head -n1)
-          nomad job validate "JOB_PATH"
-          nomad job run -namespace="${NAMESPACE}" "JOB_PATH"
+          nomad job validate "$JOB_PATH"
+          nomad job run -namespace="${NAMESPACE}" "$JOB_PATH"
           nomad --version
 
 
