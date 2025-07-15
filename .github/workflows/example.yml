@@ -18,10 +18,29 @@ jobs:
           NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }} # Токен с правами submit-job
         run: |
           # Проверка доступности API
-          curl -s -H "X-Nomad-Token: $NOMAD_TOKEN" "$NOMAD_ADDR/v1/agent/self" | jq
-          curl -v -X POST \
+          if ! curl -s -I "$NOMAD_ADDR/v1/agent/self" >/dev/null; then
+            echo "❌ Сервер Nomad недоступен по адресу $NOMAD_ADDR"
+            exit 1
+          fi
+          
+          # 2. Проверка авторизации
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
             -H "X-Nomad-Token: $NOMAD_TOKEN" \
-            -H "Content-Type: text/plain" \
-            --data-binary @./jobs/example_jobs.hcl \
-            "$NOMAD_ADDR/v1/jobs?hcl=1"
+            "$NOMAD_ADDR/v1/acl/token/self")
+          
+          if [ "$RESPONSE" -eq 200 ]; then
+            echo "✅ Успешное подключение и авторизация"
+            echo "Сервер Nomad доступен, токен действителен"
+          elif [ "$RESPONSE" -eq 403 ]; then
+            echo "❌ Ошибка 403: Неверный токен или недостаточно прав"
+            exit 1
+          else
+            echo "❌ Неожиданный код ответа: $RESPONSE"
+            exit 1
+          fi
+          
+          # 3. Полная информация о сервере
+          echo -e "\nИнформация о сервере:"
+          curl -s -H "X-Nomad-Token: $NOMAD_TOKEN" \
+            "$NOMAD_ADDR/v1/agent/self" | jq '.Config | {Version, Server, ACLs}'
           
