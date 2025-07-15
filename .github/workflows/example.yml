@@ -17,30 +17,6 @@ jobs:
           NOMAD_ADDR: "http://45.86.183.34:4646"  # Адрес вашего Nomad сервера
           NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }} # Токен с правами submit-job
         run: |
-          # Проверка доступности API
-          if ! curl -s -I "$NOMAD_ADDR/v1/agent/self" >/dev/null; then
-            echo "❌ Сервер Nomad недоступен по адресу $NOMAD_ADDR"
-            exit 1
-          fi
-          
-          # 2. Проверка авторизации
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
-            -H "X-Nomad-Token: $NOMAD_TOKEN" \
-            "$NOMAD_ADDR/v1/acl/token/self")
-          
-          if [ "$RESPONSE" -eq 200 ]; then
-            echo "✅ Успешное подключение и авторизация"
-            echo "Сервер Nomad доступен, токен действителен"
-          elif [ "$RESPONSE" -eq 403 ]; then
-            echo "❌ Ошибка 403: Неверный токен или недостаточно прав"
-            exit 1
-          else
-            echo "❌ Неожиданный код ответа: $RESPONSE"
-            exit 1
-          fi
-          
-          # 3. Полная информация о сервере
-          echo -e "\nИнформация о сервере:"
-          curl -s -H "X-Nomad-Token: $NOMAD_TOKEN" \
-            "$NOMAD_ADDR/v1/agent/self" | jq '.Config | {Version, Server, ACLs}'
+          curl --header "X-Nomad-Token: ${{ secrets.NOMAD_TOKEN }}" \http://45.86.183.34:4646/v1/jobs
+
           
