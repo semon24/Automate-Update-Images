@@ -1,4 +1,4 @@
-name: Run Nomad Job via SSH
+name: Run Nomad Job
 
 on:
   workflow_dispatch:
