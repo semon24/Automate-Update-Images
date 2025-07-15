@@ -27,7 +27,7 @@ jobs:
           JOB_PATH=$(find "${NAMESPACE}" -maxdepth 1 -type f -name '*.hcl' | head -n1)
           echo $JOB_PATH
           nomad job validate "$JOB_PATH"
-          nomad job run -check-index=false \
+          nomad job run -check-index=0 \
             -namespace="$NAMESPACE" \
             "$JOB_PATH"
 
