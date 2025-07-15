@@ -1,10 +1,11 @@
 name: Run Nomad Job via SSH
 
 on:
-  push:
-    branches: [ "main" ]
   workflow_dispatch:
-
+    inputs:
+      namespace:
+        description: 'Nomad namespace (имя папки + название namespace)'
+        required: true
 jobs:
   deploy:
     runs-on: ubuntu-latest 
@@ -19,11 +20,14 @@ jobs:
           
       - name: Submit Job to Nomad API
         env:
-          NOMAD_ADDR: "http://45.86.183.34:4646"  # Адрес вашего Nomad сервера
-          NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }} # Токен с правами submit-job
+          NOMAD_ADDR: "http://45.86.183.34:4646"  
+          NOMAD_TOKEN: ${{ secrets.NOMAD_ONLY_JOB_TOKEN }}
+          NAMESPACE: ${{ github.event.inputs.namespace }}
         run: |
-          nomad job validate ./jobs/example_jobs.hcl
-          nomad job run -namespace=group2 ./jobs/example_jobs.hcl
+          JOB_PATH=$(find "./${NAMESPACE}" -maxdepth 1 -type f -name '*.hcl' | head -n1)
+          echo $JOB_PATH
+          nomad job validate "$JOB_PATH"
+          nomad job run -namespace="${NAMESPACE}" "$JOB_PATH"
           nomad --version
 
 
