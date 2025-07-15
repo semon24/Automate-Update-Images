@@ -23,6 +23,7 @@ jobs:
           NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }} # Токен с правами submit-job
         run: |
           nomad job validate ./jobs/example_jobs.hcl
+          nomad job run -namespace=group2 ./jobs/example_jobs.hcl
           nomad --version
 
 
