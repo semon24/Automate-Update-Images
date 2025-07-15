@@ -17,8 +17,6 @@ jobs:
           NOMAD_ADDR: "http://45.86.183.34:4646"  # Адрес вашего Nomad сервера
           NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }} # Токен с правами submit-job
         run: |
-          curl --header "X-Nomad-Token: ${{ secrets.NOMAD_TOKEN }}" http://45.86.183.34:4646/v1/jobs
-
           jq -Rsc '{ JobHCL: ., Canonicalize: true }' ./jobs/example_jobs.hcl > ./jobs/example_jobs.json
           curl \
             -X POST\
