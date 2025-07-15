@@ -4,7 +4,9 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
-
+    inputs:
+      namespace:
+        description: 'Nomad namespace (имя папки + название namespace)'
 jobs:
   deploy:
     runs-on: ubuntu-latest 
@@ -24,6 +26,7 @@ jobs:
           NAMESPACE: ${{ github.event.inputs.namespace }}
         run: |
           JOB_PATH=$(find "./${NAMESPACE}" -maxdepth 1 -type f -name '*.hcl' | head -n1)
+          echo $JOB_PATH
           nomad job validate "$JOB_PATH"
           nomad job run -namespace="${NAMESPACE}" "$JOB_PATH"
           nomad --version
