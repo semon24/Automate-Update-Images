@@ -11,20 +11,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
+      - name: Setup HashiCorp Nomad
+        uses: hashicorp/setup-nomad@v1.0.0
+        with:
+          version: '1.10.2' 
+          
       - name: Submit Job to Nomad API
         env:
           NOMAD_ADDR: "http://45.86.183.34:4646"  # Адрес вашего Nomad сервера
           NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }} # Токен с правами submit-job
         run: |
-          jq -Rsc '{ JobHCL: ., Canonicalize: true }' ./jobs/example_jobs.hcl > ./jobs/example_jobs.json
-          echo "$( < ./jobs/example_jobs.json )"
-          echo ______________________________
-          curl \
-            --request POST \
-            -H "X-Nomad-Token: $NOMAD_TOKEN" \
-            -H "Content-Type: application/json" \
-            --data @./jobs/example_jobs.json \
-            http://45.86.183.34:4646/v1/jobs/parse
+          nomad job validate ./jobs/example_jobs.hcl
+          nomad --version
+
 
           
