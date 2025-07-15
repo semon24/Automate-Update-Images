@@ -19,10 +19,10 @@ jobs:
         run: |
           jq -Rsc '{ JobHCL: ., Canonicalize: true }' ./jobs/example_jobs.hcl > ./jobs/example_jobs.json
           curl \
-            -X POST\
+            --request POST \
             -H "X-Nomad-Token: $NOMAD_TOKEN" \
             -H "Content-Type: application/json" \
             --data @./jobs/example_jobs.json \
-            http://45.86.183.34:4646/v1/jobs
+            http://45.86.183.34:4646/v1/job/docker-example_compose-up-for2VM
 
           
