@@ -1,7 +1,7 @@
 job "docker-example1_compose-up-for2VM" {
-  type        = "service"
-	namespace = "group2"
-  # Ограничение по имени ноды (если нвыавыавыававыаужно)fdsfsdfsdfdsfsdf
+  type = "batch"
+  namespace = "group2"
+  # Ограничение по имени ноды (если нвыавыавыававыаужно)fdsfsеееdfsdfdsfsdf
   constraint {
     attribute = "${node.class}"
     value     = "docker1"
