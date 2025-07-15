@@ -18,6 +18,7 @@ jobs:
           NOMAD_TOKEN: ${{ secrets.NOMAD_TOKEN }} # Токен с правами submit-job
         run: |
           jq -Rsc '{ JobHCL: ., Canonicalize: true }' ./jobs/example_jobs.hcl > ./jobs/example_jobs.json
+          echo $example_jobs.json
           curl \
             --request POST \
             -H "X-Nomad-Token: $NOMAD_TOKEN" \
