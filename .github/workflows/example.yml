@@ -7,6 +7,7 @@ on:
     inputs:
       namespace:
         description: 'Nomad namespace (имя папки + название namespace)'
+        required: true
 jobs:
   deploy:
     runs-on: ubuntu-latest 
