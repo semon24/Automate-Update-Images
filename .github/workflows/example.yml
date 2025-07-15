@@ -19,10 +19,10 @@ jobs:
         run: |
           curl --header "X-Nomad-Token: ${{ secrets.NOMAD_TOKEN }}" \http://45.86.183.34:4646/v1/jobs
 
-          curl -X POST \
-            -H "X-Nomad-Token: $NOMAD_TOKEN" \          # Авторизация
-            -H "Content-Type: text/plain" \             # Формат данных (HCL)
-            --data-binary @./jobs/example_jobs.hcl \    # Сам файл задачи
-            "$NOMAD_ADDR/v1/jobs?hcl=1
+          curl \
+            --request POST \
+            -H "X-Nomad-Token: $NOMAD_TOKEN" \
+            --data @./jobs/example_jobs.hcl \
+            http://45.86.183.34:4646/v1/jobs
 
           
