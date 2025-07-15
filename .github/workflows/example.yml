@@ -19,4 +19,9 @@ jobs:
         run: |
           # Проверка доступности API
           curl -s -H "X-Nomad-Token: $NOMAD_TOKEN" "$NOMAD_ADDR/v1/agent/self" | jq
+          curl -v -X POST \
+            -H "X-Nomad-Token: $NOMAD_TOKEN" \
+            -H "Content-Type: text/plain" \
+            --data-binary @./jobs/example_jobs.hcl \
+            "$NOMAD_ADDR/v1/jobs?hcl=1"
           
