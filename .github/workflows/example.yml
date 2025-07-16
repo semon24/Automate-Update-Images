@@ -38,7 +38,8 @@ jobs:
             -t '{{ range . }}{{ if eq .ClientStatus "running" }}{{ println .ID }}{{ end }}{{ end }}' \
             -namespace="$NAMESPACE" \
             "$JOB_NAME")
-          echo "Allocation ID: $ALLOC_ID"
+          echo  "--------------------"
+          echo "Allocation ID:_________________________ $ALLOC_ID"
           
 
 
