@@ -34,10 +34,12 @@ jobs:
           nomad job run \
             -namespace="$NAMESPACE" \
             "$JOB_PATH"
-          nomad job allocs \
+          ALLOC_ID=$(nomad job allocs \
             -t '{{ range . }}{{ if eq .ClientStatus "running" }}{{ println .ID }}{{ end }}{{ end }}' \
             -namespace="$NAMESPACE" \
-            "$JOB_NAME"
+            "$JOB_NAME")
+          echo "Allocation ID: $ALLOC_ID"
+          
 
 
           
