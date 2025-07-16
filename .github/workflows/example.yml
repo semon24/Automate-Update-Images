@@ -30,6 +30,10 @@ jobs:
           nomad job run \
             -namespace="$NAMESPACE" \
             "$JOB_PATH"
+          nomad job allocs \
+            -t '{{ range . }}{{ if eq .ClientStatus "running" }}{{ println .ID }}{{ end }}{{ end }}' \
+            -namespace="$NAMESPACE" \
+            docker-example1_compose-jjjup-for2VM
 
 
           
