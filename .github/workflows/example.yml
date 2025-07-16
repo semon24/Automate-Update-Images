@@ -40,6 +40,7 @@ jobs:
             "$JOB_NAME")
           echo  "--------------------"
           echo "Allocation ID:_________________________ $ALLOC_ID"
+          nomad alloc restart -namespace="$NAMESPACE" "$ALLOC_ID"
           
 
 
