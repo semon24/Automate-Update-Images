@@ -1,7 +1,7 @@
 job "docker-example1_compose-up-for2VM" {
-  type = "batch"
+  type = "service"
   namespace = "group2"
-  # Ограничение по имени ноды (если нвыавыавыававыаужно)fdsfsеееdfsdfdsfsdf
+
   constraint {
     attribute = "${node.class}"
     value     = "docker1"
@@ -9,14 +9,13 @@ job "docker-example1_compose-up-for2VM" {
 
   group "compose" {
     task "run-compose" {
-      driver = "raw_exec"  # Прямой запуск на хосте
+      driver = "raw_exec"  
 
       config {
-        command = "/usr/bin/docker-compose" # Полный путь
+        command = "/usr/bin/docker-compose" 
         args = [
           "-f", "/nginx-compose/docker-compose.yml",
           "up",
-          "-d"
         ]
       }
     }
