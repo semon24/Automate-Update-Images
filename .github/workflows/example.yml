@@ -26,6 +26,10 @@ jobs:
         run: |
           JOB_PATH=$(find "${NAMESPACE}" -maxdepth 1 -type f -name '*.hcl' | head -n1)
           echo $JOB_PATH
+
+          JOB_NAME=$(grep -m1 '^job ' "$JOB_PATH" | awk -F'"' '{print $2}')
+          echo "Extracted job name: $JOB_NAME"
+          
           nomad job validate "$JOB_PATH"
           nomad job run \
             -namespace="$NAMESPACE" \
@@ -33,7 +37,7 @@ jobs:
           nomad job allocs \
             -t '{{ range . }}{{ if eq .ClientStatus "running" }}{{ println .ID }}{{ end }}{{ end }}' \
             -namespace="$NAMESPACE" \
-            docker-example1_compose-jjjup-for2VM
+            "$JOB_NAME"
 
 
           
