@@ -15,7 +15,8 @@ job "docker-example1_compose-up-for2VM" {
         command = "/usr/bin/docker-compose" # Полный путь
         args = [
           "-f", "/nginx-compose/docker-compose.yml",
-          "up"
+          "up",
+          "-d"
         ]
       }
     }
