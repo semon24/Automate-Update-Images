@@ -1,5 +1,5 @@
 job "docker-example1_compose-up-for2VM" {
-  type = "batch"
+  type = "service"
   namespace = "group2"
   # Ограничение по имени ноды (если нвыавыавыававыаужно)fdsfsеееdfsdfdsfsdf
   constraint {
@@ -9,7 +9,6 @@ job "docker-example1_compose-up-for2VM" {
 
   group "compose" {
     task "run-compose" {
-      kill_timeout = "30s"
       driver = "raw_exec"  # Прямой запуск на хосте
 
       config {
