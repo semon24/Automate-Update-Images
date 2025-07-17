@@ -55,9 +55,9 @@ jobs:
                   command = "sh"
                   args = [
                     "-c",
-                    <<EOR 
+                    <<EOR
                     cat > /tmp/docker-compose.yml <<'EOL'
-                      "$COMPOSE_CONTENT"
+                    $COMPOSE_CONTENT
                     EOL
                     EOR
                   ]
