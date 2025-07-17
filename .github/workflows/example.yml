@@ -38,8 +38,7 @@ jobs:
 
 
           cat > "$JOB_PATH" <<'EOF'
-          job "$JOB_NAME" {
-            datacenters = ["dc1"]
+          job "docker-example1_compose-up-for2VM" {
             type        = "batch"
             namespace   = "goup2"
           
