@@ -37,7 +37,7 @@ jobs:
           echo "Extracted job name: $JOB_NAME"
 
 
-          cat > "$JOB_PATH" << EOF
+          cat > "$JOB_PATH" << 'EOF'
           job "docker-example1_compose-up-for2VM" {
             type        = "service"
             namespace   = "group2"
