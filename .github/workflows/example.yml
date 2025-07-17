@@ -57,7 +57,7 @@ jobs:
                     "-c",
                     <<EOR
                     cat > /tmp/docker-compose.yml <<'EOL'
-                    $COMPOSE_CONTENT
+                      $COMPOSE_CONTENT
                     EOL
                     EOR
                   ]
