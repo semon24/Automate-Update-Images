@@ -55,12 +55,18 @@ jobs:
                   command = "sh"
                   args = [
                     "-c",
-                    <<EOC
-          cat > /tmp/docker-compose.yml <<'EOL'
-          \$COMPOSE_CONTENT
-          EOL
-          docker-compose -f /tmp/docker-compose.yml up -d
-          EOC
+                    <<EOF
+                    cat > /tmp/docker-compose.yml <<'EOL'
+                    version: '3'
+                    services:
+                      web:
+                        image: nginx:alpine
+                        ports:
+                          - "80:80"
+                      redis:
+                        image: redis:alpine
+                    EOL
+                    EOF
                   ]
                 }
               }
