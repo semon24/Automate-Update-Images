@@ -58,7 +58,6 @@ jobs:
                     <<-EOF
                     cat > /tmp/docker-compose.yml <<'EOL'
                     $COMPOSE_CONTENT
-                    EOL
                     EOF
                   ]
                 }
@@ -70,7 +69,7 @@ jobs:
                 config {
                   command = "/usr/bin/docker-compose"
                   args = [
-                    "-f", "/nginx-compose/docker-compose.yml",
+                    "-f", "/tmp/docker-compose.yml",
                     "up",
                   ]
                 }
