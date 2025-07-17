@@ -26,6 +26,9 @@ jobs:
         run: |
           YAML_FILE=$(find "${NAMESPACE}" -maxdepth 1 -type f -name "*.yml" -o -name "*.yaml" | head -n1)
           echo "Found YAML file: $YAML_FILE"
+          
+          COMPOSE_CONTENT=$(cat "$YAML_FILE")
+          echo "$COMPOSE_CONTENT"
 
           JOB_PATH=$(find "${NAMESPACE}" -maxdepth 1 -type f -name '*.hcl' | head -n1)
           echo $JOB_PATH
