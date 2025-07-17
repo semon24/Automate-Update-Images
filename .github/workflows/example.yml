@@ -56,19 +56,10 @@ jobs:
                   args = [
                     "-c",
                     <<EOF
-                    cat > /tmp/docker-compose.yml <<'EOL'
-                    version: '3'
-                    services:
-                      web:
-                        image: nginx:alpine
-                        ports:
-                          - "80:80"
-                      redis:
-                        image: redis:alpine
+                    cat > /tmp/docker-compose.yml << EOL
+                    $COMPOSE_CONTENT
                     EOL
-                    EOF,
-                    "-f", "/nginx-compose/docker-compose.yml",
-                    "up"
+                    EOF
                   ]
                 }
               }
@@ -76,7 +67,7 @@ jobs:
           }
           EOF
                 
-            nomad job validate "$JOB_PATH"
+          nomad job validate "$JOB_PATH"
           nomad job run \
             -namespace="$NAMESPACE" \
             "$JOB_PATH"
