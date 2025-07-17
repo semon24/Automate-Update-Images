@@ -57,8 +57,9 @@ jobs:
                     "-c",
                     <<EOC
           cat > /tmp/docker-compose.yml <<'EOL'
-          $COMPOSE_CONTENT
+          ${replace(COMPOSE_CONTENT, "$", "$$")}
           EOL
+          docker-compose -f /tmp/docker-compose.yml up -d
           EOC
                   ]
                 }
