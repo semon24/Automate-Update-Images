@@ -43,7 +43,7 @@ jobs:
             namespace   = "group2"
           
             constraint {
-              attribute = "${node.class}"
+              attribute = "\${node.class}"
               value     = "docker1"
             }
           
@@ -55,6 +55,8 @@ jobs:
                   command = "sh"
                   args = [
                     "-c",
+                    <<EOF
+                    cat > /tmp/docker-compose.yml <<'EOL'
                     $COMPOSE_CONTENT
                   ]
                 }
