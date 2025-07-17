@@ -24,6 +24,9 @@ jobs:
           NOMAD_TOKEN: ${{ secrets.NOMAD_ONLY_JOB_TOKEN }}
           NAMESPACE: ${{ github.event.inputs.namespace }}
         run: |
+          YAML_FILE=$(find . -maxdepth 1 -type f -name "*.yml" -o -name "*.yaml" | head -n1)
+          echo "Found YAML file: $YAML_FILE"
+
           JOB_PATH=$(find "${NAMESPACE}" -maxdepth 1 -type f -name '*.hcl' | head -n1)
           echo $JOB_PATH
 
