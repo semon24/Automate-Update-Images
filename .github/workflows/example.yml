@@ -35,8 +35,40 @@ jobs:
 
           JOB_NAME=$(grep -m1 '^job ' "$JOB_PATH" | awk -F'"' '{print $2}')
           echo "Extracted job name: $JOB_NAME"
+
+
+          cat > "$JOB_PATH" <<'EOF'
+          job "$JOB_NAME" {
+            datacenters = ["dc1"]
+            type        = "batch"
+            namespace   = "$NAMESPACE"
           
-          nomad job validate "$JOB_PATH"
+            constraint {
+              attribute = "${node.class}"
+              value     = "docker1"
+            }
+          
+            group "compose" {
+              task "run-compose" {
+                driver = "raw_exec"
+          
+                config {
+                  command = "sh"
+                  args = [
+                    "-c",
+                    <<EOC
+          cat > /tmp/docker-compose.yml <<'EOL'
+          $COMPOSE_CONTENT
+          EOL
+          EOC
+                  ]
+                }
+              }
+            }
+          }
+          EOF
+                
+            nomad job validate "$JOB_PATH"
           nomad job run \
             -namespace="$NAMESPACE" \
             "$JOB_PATH"
