@@ -40,7 +40,7 @@ jobs:
           cat > "$JOB_PATH" <<'EOF'
           job "docker-example1_compose-up-for2VM" {
             type        = "batch"
-            namespace   = "goup2"
+            namespace   = "group2"
           
             constraint {
               attribute = "${node.class}"
