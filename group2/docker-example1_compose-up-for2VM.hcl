@@ -1,5 +1,5 @@
 job "docker-example1_compose-up-for2VM" {
-  type = "service"
+  type = "batch"
   namespace = "group2"
 
   constraint {
