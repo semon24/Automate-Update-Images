@@ -24,70 +24,18 @@ jobs:
           NOMAD_TOKEN: ${{ secrets.NOMAD_ONLY_JOB_TOKEN }}
           NAMESPACE: ${{ github.event.inputs.namespace }}
         run: |
-          YAML_FILE=$(find "${NAMESPACE}" -maxdepth 1 -type f -name "*.yml" -o -name "*.yaml" | head -n1)
-          echo "Found YAML file: $YAML_FILE"
-          
-          COMPOSE_CONTENT=$(cat "$YAML_FILE")
-          echo "$COMPOSE_CONTENT"
-
           JOB_PATH=$(find "${NAMESPACE}" -maxdepth 1 -type f -name '*.hcl' | head -n1)
-          echo $JOB_PATH
-
           JOB_NAME=$(grep -m1 '^job ' "$JOB_PATH" | awk -F'"' '{print $2}')
-          echo "Extracted job name: $JOB_NAME"
-
-
-          cat > "$JOB_PATH" << EOF
-          job "docker-example1_compose-up-for2VM" {
-            type        = "batch"
-            namespace   = "group2"
-          
-            constraint {
-              attribute = "\${node.class}"
-              value     = "docker1"
-            }
-          
-            group "compose" {
-              task "write-compose" {
-                driver = "raw_exec"
-          
-                config {
-                  command = "sh"
-                  args = [
-                    "-c",
-                    <<EOF
-                    cat > /tmp/docker-compose.yml <<'EOL'
-          $COMPOSE_CONTENT
-                    EOF
-                  ]
-                }
-              }
-              
-              task "run-compose" {
-                driver = "raw_exec"
-    
-                config {
-                  command = "/usr/bin/docker-compose"
-                  args = [
-                    "-f", "/tmp/docker-compose.yml",
-                    "up"
-                  ]
-                }
-              }
-            }
-          }
-          EOF
                 
           nomad job validate "$JOB_PATH"
           nomad job run \
             -namespace="$NAMESPACE" \
             "$JOB_PATH"
+            
           ALLOC_ID=$(nomad job allocs \
             -t '{{ range . }}{{ if eq .ClientStatus "running" }}{{ println .ID }}{{ end }}{{ end }}' \
             -namespace="$NAMESPACE" \
             "$JOB_NAME")
-          echo  "--------------------"
-          echo "Allocation ID:_________________________ $ALLOC_ID"
           nomad alloc restart -namespace="$NAMESPACE" "$ALLOC_ID"
           
 
