@@ -9,6 +9,9 @@ variable "compose_path" {
 }
 
 job "compose-up" {
+  meta {
+    unique_id = uuidv4()
+  }
   type = "batch"
   namespace = var.namespace
 
