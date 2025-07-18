@@ -1,10 +1,20 @@
+variable "namespace" {
+  type    = string
+  default = "default"
+}
+
+variable "compose_path" {
+  type    = string
+  default = "./"
+}
+
 job "compose-up" {
   type = "batch"
-  namespace = "group2"
+  namespace = var.namespace
 
   constraint {
     attribute = "${node.class}"
-    value     = "docker1"
+    value     = var.namespace
   }
 
   group "compose" {
@@ -14,7 +24,7 @@ job "compose-up" {
       config {
         command = "/usr/bin/docker-compose" 
         args = [
-          "-f", "/nginx-compose/compose-file.yml",
+          "-f", var.compose_path,
           "up"
         ]
       }
