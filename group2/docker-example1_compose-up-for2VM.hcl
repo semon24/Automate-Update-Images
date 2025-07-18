@@ -9,6 +9,8 @@ job "docker-example1_compose-up-for2VM" {
 
   group "compose" {
     task "send-compose-file" {
+      driver = "raw_exec" 
+
       artifact {
         source      = "git::https://github.com/semon24/Automate-Update-Images"
         destination = "/tmp/repo"
