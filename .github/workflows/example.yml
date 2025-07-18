@@ -26,10 +26,8 @@ jobs:
           NOMAD_ADDR: "http://45.86.183.34:4646"  
           NOMAD_TOKEN: ${{ secrets.NOMAD_ONLY_JOB_TOKEN }}
           NAMESPACE: ${{ github.event.inputs.namespace }}
-        run: |
-          JOB_PATH=$(find "${NAMESPACE}" -maxdepth 1 -type f -name '*.hcl' | head -n1)
-          JOB_NAME=$(grep -m1 '^job ' "$JOB_PATH" | awk -F'"' '{print $2}')
-                
+          JOB_PATH: "./job_send_new_compose-file/new_compose_file.hcl"
+        run: |                
           nomad job validate "$JOB_PATH"
           nomad job run \
             -namespace="$NAMESPACE" \
