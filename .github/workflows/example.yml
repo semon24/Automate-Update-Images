@@ -31,12 +31,6 @@ jobs:
           nomad job run \
             -namespace="$NAMESPACE" \
             "$JOB_PATH"
-            
-          ALLOC_ID=$(nomad job allocs \
-            -t '{{ range . }}{{ if eq .ClientStatus "running" }}{{ println .ID }}{{ end }}{{ end }}' \
-            -namespace="$NAMESPACE" \
-            "$JOB_NAME")
-          nomad alloc restart -namespace="$NAMESPACE" "$ALLOC_ID"
           
 
 
